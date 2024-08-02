@@ -1,7 +1,7 @@
 import  { useState } from 'react';
 import { collection, addDoc} from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db ,storage} from '../firebase/Setup'
+
+import { db } from '../firebase/Setup'
 const SellForm = () => {
   const [productName, setProductName] = useState('');
   const [description, setDescription] = useState('');
@@ -32,12 +32,7 @@ const SellForm = () => {
   const handleSubmit = async(e:any) => {
     let imageUrl = '';
 
-    // If an image is selected, upload it to Firebase Storage
-    if (image) {
-      const imageRef = ref(storage, `${image}`);
-      const uploadResult = await uploadBytes(imageRef, image);
-      imageUrl = await getDownloadURL(uploadResult.ref);
-    }
+    
     e.preventDefault();
     if(validate()){
        const docRef = await addDoc(collection(db, 'Items'), {
