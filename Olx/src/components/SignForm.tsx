@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/Setup'
+import Navabr from './Navabr';
 
 type signPop = {
   SetloginPop1: any;
@@ -42,6 +43,8 @@ const SignForm = (props: signPop) => {
     }
   }
   return (
+    <>
+   
     <form  >
     <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
      <div className="fixed inset-0 bg-zinc-950 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
@@ -89,6 +92,7 @@ const SignForm = (props: signPop) => {
    </div>
     
    </form>
+   </>
   )
 }
 

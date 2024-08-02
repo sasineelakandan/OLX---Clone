@@ -1,4 +1,4 @@
-import olx from '../assets/olx.png'
+import olx from '../assets/OLX-Symbol.png'
 import lens from '../assets/lens.png'
 import arrow from '../assets/arrow.png'
 import search from '../assets/search.png'
@@ -53,7 +53,7 @@ const Navabr = () => {
           <h1 className='font-bold text-lg ml-4'>+SELL</h1>
         </Link>
     <div className='w-50 flex h-12 p-2 ml-8 cursor-pointer rounded-full border border-black' >
-      <h1 className='font-bold text-lg '>Hey! {userName}</h1>
+      <h1 className='font-bold text-lg '>Hey!{userName}</h1>
       
       
     </div>

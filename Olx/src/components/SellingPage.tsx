@@ -1,137 +1,205 @@
-import  { useState } from 'react';
-import { collection, addDoc} from 'firebase/firestore';
+/* eslint-disable no-unused-vars */
+import React, { Fragment, useState, ChangeEvent, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { storage, firestore, db,  } from '../firebase/Setup';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import Navabr from "./Navabr";
+import Footer from "./Footer";
+import Menubar from "./Menubar";
 
-import { db } from '../firebase/Setup'
-const SellForm = () => {
-  const [productName, setProductName] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [location, setLocation] = useState('');
-  const [categorys, setcategorys] = useState('');
-  const [image, setImage] = useState(null);
-  const [errors, setErrors] = useState('');
+const Create: React.FC = () => {
+  const [title, setTitle] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [location, setlocation] = useState<string>("");
+  const [discription, setdiscription] = useState<string>("");
+  const [images, setImages] = useState<File[]>([]);
+  const [Name, setName] = useState<string>("");
+  const [Phone, setPhone] = useState<string>('');
+ 
 
-  const handleImageChange = (e:any) => {
-    if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
+  const navigate = useNavigate();
+
+  const handleImage = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImages(Array.from(e.target.files));
     }
   };
 
-  const validate = () => {
-    let formErrors = {};
-    if (!productName)  setErrors("Product name is required.");
-    if (!description) setErrors("Description is required.") 
-    if (!price) setErrors("Price is required.")
-   if (!location) setErrors("location is required.") 
-    if (!categorys) setErrors("categorys is required.")   
-    if (!image) setErrors("Image is required.") 
-    
-    return Object.keys(formErrors).length === 0;
-  };
-
-  const handleSubmit = async(e:any) => {
-    let imageUrl = '';
-
-    
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(validate()){
-       const docRef = await addDoc(collection(db, 'Items'), {
-         productName:productName,
-        description:description,
-        location:location,
-        categorys:categorys,
-        price:price,
-        image:imageUrl,
-      });
-      console.log('Document written with ID: ', docRef);
-    }
-      
-     
-      setProductName('');
-      setDescription('');
-      setPrice('');
-      setcategorys('')
-      setLocation('')
-      setImage(null);
-     
-    }
   
+    
+    try {
+      const imageUrls = await Promise.all(
+        
+        images.map(async (image) => {
+          const imageRef = ref(storage, `images/${image.name}`);
+          
+          await uploadBytes(imageRef, image);
+          console.log(imageRef)
+          const url = await getDownloadURL(imageRef);
+          
+          return url;
+        })
+      );
+     
+      await addDoc(collection(db, "products"), {
+        title,
+        category,
+        Name,
+        Phone,
+        price,
+        images: imageUrls,
+        discription,
+        location,
+      });
+
+      console.log("Product added");
+      navigate("/");
+    } catch (error) {
+      console.error("Failed to add product", error);
+      
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 border rounded-lg mt-10 shadow-md bg-white">
-      <h2 className="text-2xl font-bold mb-4">Sell Your Product</h2>
-      <div className="mb-4">
-        <label className="block text-gray-700">Product Name</label>
-        <input
-          type="text"
-          className="w-full p-2 border rounded"
-          value={productName}
-          onChange={(e) => setProductName(e.target.value)}
-          required
-        />
+    <Fragment>
+       <Navabr/>
+       <Menubar/>
+      <div className="flex justify-center mt-4 items-center min-h-screen bg-gray-100">
+        <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">ProductName</label>
+              <input
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Name"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+              <input
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                type="text"
+                id="category"
+                name="category"
+                placeholder="Category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Discription</label>
+              <input
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                type="text"
+                id="category"
+                name="category"
+                placeholder="Discription"
+                value={discription}
+                onChange={(e) => setdiscription(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Location</label>
+              <input
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                type="text"
+                id="category"
+                name="category"
+                placeholder="Location"
+                value={location}
+                onChange={(e) => setlocation(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Name</label>
+              <input
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                type="text"
+                id="category"
+                name="SellerName"
+                placeholder="Username"
+                value={Name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Phone</label>
+              <input
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                type="text"
+                id="category"
+                name="Mobile"
+                placeholder="Phone"
+                value={Phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
+              <input
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                type="number"
+                id="price"
+                name="price"
+                placeholder="Price"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="images" className="block text-sm font-medium text-gray-700">Images</label>
+              <input
+                type="file"
+                id="images"
+                onChange={handleImage}
+                accept="image/*"
+                multiple
+                required
+                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+              />
+              <div className="flex flex-wrap mt-4 gap-2">
+                {images.map((image, i) => (
+                  <img
+                    key={i}
+                    src={URL.createObjectURL(image)}
+                    alt="Preview"
+                    className="w-20 h-20 object-cover rounded-md"
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-center">
+             
+                <button
+                  type="submit"
+                  className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Upload and Submit
+                </button>
+              
+            </div>
+          </form>
+        </div>
       </div>
-      {errors && <p className="text-red-500 text-sm">{errors}</p>}
-
-      <div className="mb-4">
-        <label className="block text-gray-700">Description</label>
-        <textarea
-          className="w-full p-2 border rounded"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        ></textarea>
-      </div>
-      {errors && <p className="text-red-500 text-sm">{errors}</p>}
-      <div className="mb-4">
-        <label className="block text-gray-700">location</label>
-        <textarea
-          className="w-full p-2 border rounded"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          required
-        ></textarea>
-      </div>
-      {errors && <p className="text-red-500 text-sm">{errors}</p>}
-      <div className="mb-4">
-        <label className="block text-gray-700">Price</label>
-        <input
-          type="number"
-          className="w-full p-2 border rounded"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          required
-        />
-      </div>
-      {errors && <p className="text-red-500 text-sm">{errors}</p>}
-      <div className="mb-4">
-        <label className="block text-gray-700">Categorys</label>
-        <input
-          type="text"
-          className="w-full p-2 border rounded"
-          value={categorys}
-          onChange={(e) => setcategorys(e.target.value)}
-          required
-        />
-      </div>
-      {errors && <p className="text-red-500 text-sm">{errors}</p>}
-      <div className="mb-4">
-        <label className="block text-gray-700">Image</label>
-        <input
-          type="file"
-          className="w-full p-2 border rounded"
-          onChange={handleImageChange}
-        />
-        {image && (
-          <div className="mt-2 text-gray-600">
-            Selected file: {image}
-          </div>
-        )}
-      </div>
-      {errors && <p className="text-red-500 text-sm">{errors}</p>}
-      <button type="submit" className="w-full p-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700">
-        Submit
-      </button>
-    </form>
+      <Footer/>
+    </Fragment>
   );
-}
+};
 
-export default SellForm;
+export default Create;
