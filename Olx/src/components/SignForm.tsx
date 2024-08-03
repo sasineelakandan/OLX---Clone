@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useState} from 'react';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase/Setup'
-import Navabr from './Navabr';
+
 
 type signPop = {
-  SetloginPop1: any;
-  SetloginPop2: any;
+  setSignPop: any;
+  setLoginPop: any;
+  
 };
+
+
 
 const SignForm = (props: signPop) => {
   const [user, setuser] = useState('');
@@ -15,7 +18,7 @@ const SignForm = (props: signPop) => {
   const [errorMessage, setErrorMessage] = useState('');
   async function handleclick(e: any) {
     e.preventDefault();
-
+  
     const q = query(collection(db, 'users'), where('userName', '==', user));
     const querySnapshot = await getDocs(q);
 
@@ -35,8 +38,8 @@ const SignForm = (props: signPop) => {
       setuserCPass('');
       setuserPass('');
       setuser('');
-      props?.SetloginPop2(false);
-      props?.SetloginPop1(true);
+      props?.setSignPop(false);
+      props?.setLoginPop(true);
     } else {
       setErrorMessage('User already exists');
       
@@ -52,7 +55,7 @@ const SignForm = (props: signPop) => {
        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
          <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:w-96 sm:max-w-lg">
            <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-             <h1 onClick={()=>{props?.SetloginPop2(false)}} className="font-semibold text-3xl cursor-pointer">X</h1>
+             <h1 onClick={()=>{props?.setSignPop(false)}} className="font-semibold text-3xl cursor-pointer">X</h1>
              <div className="sm:flex sm:items-start">
                <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                  <div className="mt-2">

@@ -8,9 +8,9 @@ import {  useNavigate } from 'react-router-dom'
 
 
 type PropLoginF = {
-    SetloginPop1: any;
-    SetloginPop3: any;
-    setuserName:any
+    setLoginPop: any;
+    setSignPop: any;
+    setUserName:any
 };
 
 const LoginForm = (props: PropLoginF) => {
@@ -40,8 +40,8 @@ const LoginForm = (props: PropLoginF) => {
                
                 if(userpass==userDoc.userCPass){
                      setpaswordMatch(true)
-                    props?.SetloginPop1(false)
-                    props.setuserName(userDoc?.userName) 
+                    props?.setLoginPop(false)
+                    props.setUserName(userDoc?.userName) 
                     localStorage.setItem('username',username);
                      navigate('/')
                      
@@ -71,7 +71,7 @@ const LoginForm = (props: PropLoginF) => {
                     <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                         <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:w-96 sm:max-w-lg">
                             <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                                <h1 onClick={() => { props?.SetloginPop1(false) }} className="font-semibold text-3xl cursor-pointer">X</h1>
+                                <h1 onClick={() => { props?.setLoginPop(false) }} className="font-semibold text-3xl cursor-pointer">X</h1>
                                 <div className="sm:flex sm:items-start">
                                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                         <div className="mt-2">
@@ -103,7 +103,7 @@ const LoginForm = (props: PropLoginF) => {
                                             >
                                                 Login
                                             </button>
-                                            <h1 onClick={() => { props?.SetloginPop3(true); props.SetloginPop1(false) }} className="text-center mt-4 underline cursor-pointer">New User?</h1>
+                                            <h1 onClick={() => { props?.setSignPop(true); props.setLoginPop(false) }} className="text-center mt-4 underline cursor-pointer">New User?</h1>
                                             <div onClick={googleSignup} className="flex border-2 border-gray-300 p-2 rounded-md mt-4 cursor-pointer">
                                                 <img src={Google} alt="Google" className="h-6 w-6" />
                                                 <h1 className="font-semibold ml-12">Continue with Google</h1>
